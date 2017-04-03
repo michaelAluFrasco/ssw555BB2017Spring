@@ -4,6 +4,8 @@ import datetime
 from collections import Counter
 
 today = datetime.datetime.now()
+today_m_d_format = today.strftime("%m-%d") #used to extact day and month from time
+today_m_d_parsed = datetime.datetime.strptime(today_m_d_format, "%m-%d") #used to extact day and month from time
 
 def US05_marriage_before_death(all_families, all_persons):
     for i in range(len(all_families)):
@@ -334,6 +336,19 @@ def US37_Spouses_Descendants_died_within_last_30_days(all_persons,all_families):
     print "List all living spouses and descendants of people in a GEDCOM file who died in the last 30 days are" + ' ' + ', '.join(alive_descendats)
     return alive_descendats
 
+# US38 All living people with birthdays in the next 30 days
+def US38_upcoming_birthdays(all_persons):
+    for i in range(len(all_persons)):
+        if all_persons[i]['alive'] == True:
+            for x in range(len(all_persons)):
+                birthdate = all_persons[x]['birthdate']
+                person = all_persons[x]['id']
+                birthdate_string = birthdate.strftime("%m-%d")
+                birthdate_object = datetime.datetime.strptime(birthdate_string,"%m-%d")
+                date_difference = birthdate_object - today_m_d_parsed
+                if date_difference <= datetime.timedelta(days=30) and date_difference > datetime.timedelta(days=0):
+                    print 'US38: Upcoming Birthday for person ID ' + str(person)
+
 if __name__ == '__main__':
     parsed_data = gedcom.parse("sample.ged")     # Provide gedcom file path here
     fam = parser_gedcom.for_families(parsed_data)
@@ -363,3 +378,5 @@ if __name__ == '__main__':
     US25_unique_firstname_in_family(ind, fam)
     US36_Individual_died_within_last_30_days(ind)
     US37_Spouses_Descendants_died_within_last_30_days(ind,fam)
+    US38_upcoming_birthdays(ind)
+   

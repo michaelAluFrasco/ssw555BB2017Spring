@@ -392,6 +392,17 @@ def US27_include_current_age(allPersons):
 		name = allPersons[x]['name']
 		age = allPersons[x]['age']
 		print name + "\t:" + id + "\t:" + str(age)
+		
+def US39_upcoming_anniversaries(all_persons, all_families):
+    today_m_d_parsed = datetime.datetime.strptime(today.strftime("%m-%d"),"%m-%d")  # used to remove year from full date
+    for i in range(len(all_families)):
+        anniversary = all_families[i]['marriage']
+        family_id = all_families[i]['Family_id']
+        if anniversary != None:
+            anniversary_object = datetime.datetime.strptime(anniversary.strftime("%m-%d"), "%m-%d")
+            date_difference = anniversary_object - today_m_d_parsed
+            if (date_difference <= datetime.timedelta(days=30) and date_difference > datetime.timedelta(days=0)) or (date_difference <= datetime.timedelta(days=365) and date_difference > datetime.timedelta(days=335)):
+                        print 'US39: Upcoming Anniversary for family ID' + str(family_id)
 
 if __name__ == '__main__':
 	parsed_data = gedcom.parse("sample.ged")     # Provide gedcom file path here
@@ -429,3 +440,4 @@ if __name__ == '__main__':
 	US37_Spouses_Descendants_died_within_last_30_days(ind,fam)
 	US28_order_siblings_by_age(ind, fam)
 	US27_include_current_age(ind)
+	US39_upcoming_anniversaries(ind)
